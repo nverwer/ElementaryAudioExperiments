@@ -32,13 +32,13 @@ function voice(freq, delta) {
   return el.mul(
     el.const({value: 1.0 / 7.0}),
     el.add(
-      el.blepsaw(el.const({value: freq + delta * Math.random()})),
-      el.blepsaw(el.const({value: freq + delta * Math.random()})),
-      el.blepsaw(el.const({value: freq + delta * Math.random()})),
-      el.blepsaw(el.const({value: freq + delta * Math.random()})),
-      el.blepsaw(el.const({value: freq + delta * Math.random()})),
-      el.blepsaw(el.const({value: freq + delta * Math.random()})),
-      el.blepsaw(el.const({value: freq + delta * Math.random()})),
+      el.blepsaw(el.const({key: 'v1f', value: freq + delta * Math.random()})),
+      el.blepsaw(el.const({key: 'v2f', value: freq + delta * Math.random()})),
+      el.blepsaw(el.const({key: 'v3f', value: freq + delta * Math.random()})),
+      el.blepsaw(el.const({key: 'v4f', value: freq + delta * Math.random()})),
+      el.blepsaw(el.const({key: 'v5f', value: freq + delta * Math.random()})),
+      el.blepsaw(el.const({key: 'v6f', value: freq + delta * Math.random()})),
+      el.blepsaw(el.const({key: 'v7f', value: freq + delta * Math.random()})),
     )
   );
 }
