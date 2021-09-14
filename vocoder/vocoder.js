@@ -40,10 +40,10 @@ const channelFilter = (settings) =>
 
 /**
  * envelope follower using one-pole smoothing
- * Low amplitudes are suppressed by raising the output to a power greater than 1.
+ * sometimes it is useful to suppress low amplitudes by raising the output to a power between 1 and 2 (not implemented).
  */
 const envelopeFollower = (envelopeSmoothing) =>
-  (x) => el.pow(el.smooth(el.tau2pole(envelopeSmoothing), el.abs(x)), 1.5);
+  (x) => el.smooth(el.tau2pole(envelopeSmoothing), el.abs(x));
 
 
 /**
@@ -61,9 +61,17 @@ const vocoder = (settings) => {
   const channelFilters = em.range(settings.nrChannels).map(k => channelFilter(settings)(k));
   const channelVCA = envelopeFollower(settings.envelopeSmoothing);
   return (modulator, carrier) => {
-    return em.extend(el.add)(channelFilters.map(bpf => el.mul(channelVCA(bpf(modulator)), bpf(carrier))));
+    const channelAmplitudes = channelFilters.map(filter => channelVCA(filter(modulator)));
+    const channelCarriers = channelFilters.map(filter => filter(carrier));
+    return em.extend(el.add)(em.zipWith(el.mul, channelAmplitudes, channelCarriers));
   };
 };
+/* The following experiment to add noise for unvoiced speech does not work well.
+    const lowChannelsAmplitude = el.add(channelAmplitudes.slice(0, Math.floor(settings.nrChannels/3)));
+    const highChannelsAmplitude = el.add(channelAmplitudes.slice(Math.floor(settings.nrChannels*3/4), settings.nrChannels-1));
+    const voicedUnvoicedCarrier = el.select(el.ge(lowChannelsAmplitude, highChannelsAmplitude),
+                                            carrier, el.add(carrier, el.noise()));
+*/
 
 
 exports.vocoder = vocoder;
