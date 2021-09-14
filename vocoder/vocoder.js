@@ -61,17 +61,21 @@ const vocoder = (settings) => {
   const channelFilters = em.range(settings.nrChannels).map(k => channelFilter(settings)(k));
   const channelVCA = envelopeFollower(settings.envelopeSmoothing);
   return (modulator, carrier) => {
+    // Amplitudes for all channels.
     const channelAmplitudes = channelFilters.map(filter => channelVCA(filter(modulator)));
-    const channelCarriers = channelFilters.map(filter => filter(carrier));
+    // Use two subsets of the channelAmplitudes for voiced-unvoiced detection.
+    const lowChannelsAmplitude = el.add(channelAmplitudes.slice(0, Math.floor(settings.nrChannels/3)));
+    const highChannelsAmplitude = el.add(channelAmplitudes.slice(Math.floor(settings.nrChannels*3/4), settings.nrChannels-1));
+    const voicedUnvoiced = el.mul(0,5, el.sub(el.ge(lowChannelsAmplitude, el.mul(2, highChannelsAmplitude)),
+                                              el.le(el.mul(2, lowChannelsAmplitude), highChannelsAmplitude), -1));
+    // Add noise to the carrier for unvoiced speech.
+    const voicedUnvoicedCarrier = el.select(voicedUnvoiced, carrier, el.add(carrier, el.mul(0.5, el.noise())));
+    // Split the carrier into channels.
+    const channelCarriers = channelFilters.map(filter => filter(voicedUnvoicedCarrier));
+    // Apply per-channel modulation to the carrier.
     return em.extend(el.add)(em.zipWith(el.mul, channelAmplitudes, channelCarriers));
   };
 };
-/* The following experiment to add noise for unvoiced speech does not work well.
-    const lowChannelsAmplitude = el.add(channelAmplitudes.slice(0, Math.floor(settings.nrChannels/3)));
-    const highChannelsAmplitude = el.add(channelAmplitudes.slice(Math.floor(settings.nrChannels*3/4), settings.nrChannels-1));
-    const voicedUnvoicedCarrier = el.select(el.ge(lowChannelsAmplitude, highChannelsAmplitude),
-                                            carrier, el.add(carrier, el.noise()));
-*/
 
 
 exports.vocoder = vocoder;

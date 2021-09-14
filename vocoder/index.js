@@ -13,13 +13,12 @@ const el_pulse = width => x => el.le(el.phasor(x), width);
 
 function voice(freq, delta) {
   const voices = [
-//    el.noise(),
 //    el_pulse(0.1)(el.const({key: 'v1f', value: 0.5 * freq + delta * Math.random()})),
     el_pulse(0.05)(el.const({key: 'v2f', value: freq})),
 //    el_pulse(0.1)(el.const({key: 'v3f', value: freq + delta * Math.random()})),
 //    el_pulse(0.1)(el.const({key: 'v4f', value: M3 * freq})),
 //    el_pulse(0.1)(el.const({key: 'v5f', value: M3 * freq + delta * Math.random()})),
-//    el_pulse(0.1)(el.const({key: 'v6f', value: P5 * freq})),
+    el_pulse(0.1)(el.const({key: 'v6f', value: P5 * freq})),
 //    el_pulse(0.1)(el.const({key: 'v7f', value: P5 * freq + delta * Math.random()}))
   ];
   return el.mul(
