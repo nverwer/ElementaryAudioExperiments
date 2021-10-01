@@ -27,22 +27,29 @@ function voice(freq, delta) {
   );
 }
 
+const myVocoder = vocoder();
+
+function renderVocoder(carrierFreq) {
+  const carrier = voice(carrierFreq, 8);
+  // Render the vocoder.
+  elementary.core.render(
+    myVocoder(el.in({channel: 0}), carrier),
+    //el.in({channel: 0}),
+    myVocoder(el.in({channel: 1}), carrier)
+    //el.in({channel: 1})
+  );
+}
+
 
 // Use the audio input as the modulator and the synth as the carrier.
 
 elementary.core.on('load', function() {
-  const myVocoder = vocoder();
-  // Midi receiver
+  renderVocoder(110);
   elementary.core.on('midi', function(e) {
     if (e && e.hasOwnProperty('type') && e.type === 'noteOn') {
-      const carrierfreQ = e.noteFrequency;
-      console.log(`freq=${carrierfreQ}`);
-      const carrier = voice(carrierfreQ, 8);
-      // Render the vocoder.
-      elementary.core.render(
-        myVocoder(el.in({channel: 0}), carrier),
-        myVocoder(el.in({channel: 1}), carrier)
-      );
+      const carrierFreq = e.noteFrequency;
+      console.log(`freq=${carrierFreq}`);
+      renderVocoder(carrierFreq);
     }
   });
 });
