@@ -58,9 +58,9 @@ const voicedUnvoiced = (channelAmplitudes) => {
   const oneFourthNrChannels = Math.floor(channelAmplitudes.length/4)
   // Use two subsets of the channelAmplitudes for voiced-unvoiced detection.
   const lowChannels = channelAmplitudes.slice(0, oneThirdNrChannels);
-  const lowChannelsAmplitude = el.div(el.add(lowChannels), oneThirdNrChannels);
+  const lowChannelsAmplitude = el.div(em.extend(el.add)(lowChannels), oneThirdNrChannels);
   const highChannels = channelAmplitudes.slice(-oneFourthNrChannels);
-  const highChannelsAmplitude = el.div(el.add(highChannels), oneFourthNrChannels);
+  const highChannelsAmplitude = el.div(em.extend(el.add)(highChannels), oneFourthNrChannels);
   return el.ge(lowChannelsAmplitude, highChannelsAmplitude);
 };
 

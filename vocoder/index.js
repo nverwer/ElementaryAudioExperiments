@@ -27,7 +27,7 @@ function voice(freq, delta) {
   );
 }
 
-const myVocoder = vocoder();
+const myVocoder = vocoder(); // also try {nrChannels: 24, q:4}
 
 function renderVocoder(carrierFreq) {
   const carrier = voice(carrierFreq, 8);
