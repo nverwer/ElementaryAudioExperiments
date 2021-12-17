@@ -1,8 +1,8 @@
 // If you hear nothing, use the parameter -i 2.
 
-const el = require('@nick-thompson/elementary');
+import {ElementaryNodeRenderer as core, el} from '@nick-thompson/elementary';
 
-const {vocoder} = require('./vocoder');
+import vocoder from './vocoder.js';
 
 // midi synthesizer, based on the Elementary examples
 
@@ -32,7 +32,7 @@ const myVocoder = vocoder();
 function renderVocoder(carrierFreq) {
   const carrier = voice(carrierFreq, 8);
   // Render the vocoder.
-  elementary.core.render(
+  core.render(
     myVocoder(el.in({channel: 0}), carrier),
     //el.in({channel: 0}),
     myVocoder(el.in({channel: 1}), carrier)
@@ -43,9 +43,9 @@ function renderVocoder(carrierFreq) {
 
 // Use the audio input as the modulator and the synth as the carrier.
 
-elementary.core.on('load', function() {
+core.on('load', function() {
   renderVocoder(110);
-  elementary.core.on('midi', function(e) {
+  core.on('midi', function(e) {
     if (e && e.hasOwnProperty('type') && e.type === 'noteOn') {
       const carrierFreq = e.noteFrequency;
       console.log(`freq=${carrierFreq}`);
@@ -53,3 +53,5 @@ elementary.core.on('load', function() {
     }
   });
 });
+
+core.initialize();

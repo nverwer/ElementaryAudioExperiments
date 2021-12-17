@@ -1,5 +1,5 @@
-const el = require('@nick-thompson/elementary');
-const em = require('../em');
+import {ElementaryNodeRenderer as core, el} from '@nick-thompson/elementary';
+import * as em from '../em.js';
 
 
 /**
@@ -89,5 +89,4 @@ const vocoder = (settings) => {
   };
 };
 
-
-exports.vocoder = vocoder;
+export default vocoder
